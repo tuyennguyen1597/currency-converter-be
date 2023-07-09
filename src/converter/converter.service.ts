@@ -1,13 +1,17 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { response } from 'express';
+import { InjectRepository } from '@nestjs/typeorm';
 import { map } from 'rxjs';
 import { ConverterRequestDTO } from 'src/dto/converter-request.dto';
+import { ConverterTransactionDTO } from 'src/dto/converter-transaction.dto';
+import { Transaction } from 'src/model/transaction.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ConverterService {
     constructor(
-        private readonly httpService: HttpService
+        private readonly httpService: HttpService,
+        @InjectRepository(Transaction) private readonly transactionRepository: Repository<Transaction>
     ) { }
 
     async getCurrencies() {
@@ -50,5 +54,12 @@ export class ConverterService {
             const fromToUSD = (1 / rates["rates"]["USD"]) * request.amount;
             convertedRate = fromToUSD / rates["rates"][request.to];
         }
+    }
+
+    async saveTransaction(transaction: ConverterTransactionDTO) {
+        const transactionEntity = new Transaction()
+        Object.assign(transactionEntity, transaction)
+        await this.transactionRepository.save(transaction);
+        return transactionEntity
     }
 }

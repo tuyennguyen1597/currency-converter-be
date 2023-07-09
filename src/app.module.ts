@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 import { ConverterModule } from './converter/converter.module';
+import { Transaction } from './model/transaction.entity';
 
 @Module({
     imports: [ConfigModule.forRoot(),
@@ -15,7 +16,7 @@ import { ConverterModule } from './converter/converter.module';
             username: process.env.USERNAME,
             password: process.env.PASSWORD,
             database: process.env.DATABASE,
-            entities: [],
+            entities: [Transaction],
             options: {
                 encrypt: true
             }
